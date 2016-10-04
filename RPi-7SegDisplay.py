@@ -18,6 +18,8 @@ _CHARACTERS = {
     '-': 0b10111111
     }
 
+_BLANK = [_CHARACTERS[' ']] * 8
+
 
 def init(data_pin, clock_pin, latch_pin):
     global _data, _clock, _latch, _proc
@@ -49,10 +51,9 @@ def _shift(byte):
 def _write(message):
     for i in range(len(message)):
         _shift(int(pow(2, i)))
-        _shift(_CHARACTERS[message[i]])
+        _shift(message[i])
         GPIO.output(_latch, 1)
         GPIO.output(_latch, 0)
-        sleep(0.002)
 
 
 def _display():
@@ -60,16 +61,23 @@ def _display():
         if not _queue.empty():
             text = _queue.get()
         _write(text)
+        sleep(0.002)
 
 
 def show(message):
+    result = []
     if not _queue.full():
-        _queue.put(message)
+        for i in range(len(message)):
+            if (message[i] == '.' and i > 0):
+                result[-1] = result[-1] - 128
+            elif (message[i] != '.'):
+                result.append(_CHARACTERS[message[i]])
+        _queue.put(result)
 
 
 def stop():
     _proc.terminate()
-    _write('        ')
+    _write(_BLANK)
 
 _queue = multiprocessing.Queue(2)
-_queue.put('        ')
+_queue.put(_BLANK)
