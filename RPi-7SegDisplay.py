@@ -1,5 +1,7 @@
 import RPi.GPIO as GPIO
 import multiprocessing
+import signal
+import sys
 from time import sleep
 
 _CHARACTERS = {
@@ -73,6 +75,12 @@ def show(message):
 def stop():
     _proc.terminate()
     _write(_BLANK)
+    GPIO.cleanup()
+
+def _signal_handler(signal, frame):
+    stop()
+    sys.exit(0)
 
 _queue = multiprocessing.Queue(2)
 _queue.put(_BLANK)
+signal.signal(signal.SIGINT, _signal_handler)
