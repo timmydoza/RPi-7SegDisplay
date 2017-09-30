@@ -35,7 +35,7 @@ class RPi_7SegDisplay():
         GPIO.setup([data_pin, clock_pin, latch_pin], GPIO.OUT)
 
         if (len(multiprocessing.active_children()) == 0):
-            self._proc = multiprocessing.Process(target=_display)
+            self._proc = multiprocessing.Process(target=self._display)
             self._proc.start()
 
         self._queue = multiprocessing.Queue(2)
