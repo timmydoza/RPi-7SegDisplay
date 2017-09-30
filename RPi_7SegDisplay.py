@@ -4,7 +4,7 @@ import signal
 import sys
 from time import sleep
 
-class RPi_7SegDisplay():
+class Display():
 
     _CHARACTERS = {
         '0': 0b11000000,
@@ -29,18 +29,20 @@ class RPi_7SegDisplay():
         self._data = data_pin
         self._clock = clock_pin
         self._latch = latch_pin
-
+        
         GPIO.setwarnings(False)
         GPIO.setmode(GPIO.BCM)
         GPIO.setup([data_pin, clock_pin, latch_pin], GPIO.OUT)
+        
+        self._queue = multiprocessing.Queue(2)
+        self._queue.put(self._BLANK)
+        
+        signal.signal(signal.SIGINT, self._signal_handler)
 
         if (len(multiprocessing.active_children()) == 0):
             self._proc = multiprocessing.Process(target=self._display)
             self._proc.start()
 
-        self._queue = multiprocessing.Queue(2)
-        self._queue.put(_BLANK)
-        signal.signal(signal.SIGINT, self._signal_handler)
 
     def _shift(self, byte):
         for i in range(7, -1, -1):
@@ -63,7 +65,7 @@ class RPi_7SegDisplay():
             if not self._queue.empty():
                 text = self._queue.get()
             self._write(text)
-
+        
 
     def show(self, message):
         result = []
@@ -78,9 +80,9 @@ class RPi_7SegDisplay():
 
     def stop(self):
         self._proc.terminate()
-        self._write(_BLANK)
+        self._write(self._BLANK)
         GPIO.cleanup()
 
     def _signal_handler(self, signal, frame):
-        stop()
+        self.stop()
         sys.exit(0)
