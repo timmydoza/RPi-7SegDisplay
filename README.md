@@ -10,13 +10,13 @@ RPi_7SegDisplay depends upon the RPi.GPIO library, which should already be insta
 ## Usage
 Note: RPi_7SegDisplay accepts BCM numbers when initializing the GPIO pins.  See: https://sourceforge.net/p/raspberry-gpio-python/wiki/BasicUsage/#pin-numbering
 ```
-import RPi_7SegDisplay as display
+from RPi_7SegDisplay import Display
 
 data_pin=2
 clock_pin=3
 latch_pin=4
 
-display.init(data_pin, clock_pin, latch_pin)
+display = Display(data_pin, clock_pin, latch_pin)
 
 display.show('12345678')
 ```

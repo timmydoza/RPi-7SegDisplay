@@ -2,7 +2,7 @@ from distutils.core import setup
 
 setup(
     name='RPi_7SegDisplay',
-    version='0.0.1',
+    version='1.0.0',
     description='A Python package for displaying messages on an eight-digit seven-segment display connected to a Raspberry Pi',
     author='Tim Mendoza',
     author_email='timmydoza@gmail.com',
