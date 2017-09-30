@@ -47,11 +47,11 @@ def _shift(byte):
 
 def _write(message):
     for i, char in enumerate(message):
-        _shift(2 << i)
+        _shift(1 << i)
         _shift(char)
         GPIO.output(_latch, 1)
         GPIO.output(_latch, 0)
-        sleep(0.002)
+        sleep(0.003)
 
 
 def _display():
